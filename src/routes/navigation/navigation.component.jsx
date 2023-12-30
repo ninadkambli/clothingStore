@@ -1,39 +1,41 @@
-import { Fragment,useContext } from "react";
+import { Fragment, useContext } from "react";
 import { UserContext } from "../../contexts/user.context";
-import './navigation.styles.scss'
+import "./navigation.styles.scss";
 import { Outlet, Link } from "react-router-dom";
 import { ReactComponent as CrwnLogo } from "../../assets/crown.svg";
 import { signOutUser } from "../../utils/firebase.utills";
+import CartIcon from "../../components/cart-icon/cart--icon.component";
 
 const Navigation = () => {
-    const {currentUser} = useContext(UserContext)
+  const { currentUser } = useContext(UserContext);
 
-    return(
+  return (
     <Fragment>
-        <div className='navigation'>
-            <Link className='logo-container' to='/'>
-                <CrwnLogo className="logo" />
-            </Link>
-            
-            <div className='nav-links-container'>
-                <Link className='nav-link' to = '/shop'>
-                    Shop
-                </Link>
-                {
-                    currentUser ? (
-                        <span className="nav=link" onClick = {signOutUser}>{' '}Sign Out{' '}</span>
-                    ):(
-                        <Link className='nav-link' to = '/auth'>
-                            Sing In
-                        </Link>
-                    )
-                }
-               
-            </div>
-        </div>        
-        <Outlet />
-    </Fragment>
-    )
-}
+      <div className="navigation">
+        <Link className="logo-container" to="/">
+          <CrwnLogo className="logo" />
+        </Link>
 
-export default Navigation
+        <div className="nav-links-container">
+          <Link className="nav-link" to="/shop">
+            Shop
+          </Link>
+          {currentUser ? (
+            <span className="nav=link" onClick={signOutUser}>
+              {" "}
+              Sign Out{" "}
+            </span>
+          ) : (
+            <Link className="nav-link" to="/auth">
+              Sing In
+            </Link>
+          )}
+          <CartIcon />
+        </div>
+      </div>
+      <Outlet />
+    </Fragment>
+  );
+};
+
+export default Navigation;
