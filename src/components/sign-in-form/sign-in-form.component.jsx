@@ -1,13 +1,14 @@
 import { useState } from "react";
-import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
-import FormInput from "../form-input/form-input.component";
 
-import "./sign-in-form.styles.scss";
+import FormInput from "../form-input/form-input.component";
+import Button, { BUTTON_TYPE_CLASSES } from "../button/button.component";
+
 import {
-  signInWithGooglePopup,
-  createUserDocumentFromAuth,
   signInAuthUserWithEmailAndPassword,
-} from "../../utils/firebase.utills";
+  signInWithGooglePopup,
+} from "../../utils/firebase/firebase.utils";
+
+import { SignInContainer, ButtonsContainer } from "./sign-in-form.styles";
 
 const defaultFormFields = {
   email: "",
@@ -17,40 +18,35 @@ const defaultFormFields = {
 const SignInForm = () => {
   const [formFields, setFormFields] = useState(defaultFormFields);
   const { email, password } = formFields;
-  const resetFormFeilds = () => {
-    setFormFields(defaultFormFields);
-  };
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      await signInAuthUserWithEmailAndPassword(email, password);
-      resetFormFeilds();
-    } catch (error) {
-      switch (error.code) {
-        case "auth/invalid-credential":
-          alert("Incorrect password for email");
-          break;
-        case "auth/user-not-found":
-          alert("No user associated with this email");
-          break;
-        default:
-          console.log(error);
-      }
-    }
-  };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormFields({ ...formFields, [name]: value });
+  const resetFormFields = () => {
+    setFormFields(defaultFormFields);
   };
 
   const signInWithGoogle = async () => {
     await signInWithGooglePopup();
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      await signInAuthUserWithEmailAndPassword(email, password);
+      resetFormFields();
+    } catch (error) {
+      console.log("user sign in failed", error);
+    }
+  };
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+
+    setFormFields({ ...formFields, [name]: value });
+  };
+
   return (
-    <div className="sign-up-container">
-      <h2>Already have an account</h2>
+    <SignInContainer>
+      <h2>Already have an account?</h2>
       <span>Sign in with your email and password</span>
       <form onSubmit={handleSubmit}>
         <FormInput
@@ -61,6 +57,7 @@ const SignInForm = () => {
           name="email"
           value={email}
         />
+
         <FormInput
           label="Password"
           type="password"
@@ -69,18 +66,18 @@ const SignInForm = () => {
           name="password"
           value={password}
         />
-        <div className="buttons-container">
+        <ButtonsContainer>
           <Button type="submit">Sign In</Button>
           <Button
-            type={BUTTON_TYPE_CLASSES.google}
-            buttonType="google"
+            buttonType={BUTTON_TYPE_CLASSES.google}
+            type="button"
             onClick={signInWithGoogle}
           >
-            Google SignIn
+            Sign In With Google
           </Button>
-        </div>
+        </ButtonsContainer>
       </form>
-    </div>
+    </SignInContainer>
   );
 };
 
