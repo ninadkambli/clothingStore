@@ -1,24 +1,21 @@
 import { ShoppingIcon, CartIconContainer, ItemCount } from "./cart-icon.styles";
-import { useContext, useState, useEffect } from "react";
-import { CartContext } from "../../contexts/cart.context";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectCartCount,
+  selectIsCartOpen,
+} from "../../store/cart/cart.selector";
+import { setIsCartOpen } from "../../store/cart/cart.action";
 
 const CartIcon = () => {
-  const { isCartOpen, setIsCartOpen, cartItems } = useContext(CartContext);
-  const [totalCartItems, setTotalCartItems] = useState(0);
-  const toggleIsCartOpen = () => setIsCartOpen(!isCartOpen);
-
-  useEffect(() => {
-    const newCartCount = cartItems.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    );
-    setTotalCartItems(newCartCount);
-  }, [cartItems]);
+  const cartCount = useSelector(selectCartCount);
+  const dispatch = useDispatch();
+  const isCartOpen = useSelector(selectIsCartOpen);
+  const toggleIsCartOpen = () => dispatch(setIsCartOpen(!isCartOpen));
 
   return (
     <CartIconContainer onClick={toggleIsCartOpen}>
       <ShoppingIcon className="shopping=icon" />
-      <ItemCount>{totalCartItems}</ItemCount>
+      <ItemCount>{cartCount}</ItemCount>
     </CartIconContainer>
   );
 };
